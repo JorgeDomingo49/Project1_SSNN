@@ -1,0 +1,104 @@
+--You can define your own functions as is done here for parsePayload
+function parsePayload(appeui,deveui,payload)
+	Tag1 = "Light"
+  	Tag2 = "Temperature"
+  	Tag3 = "Humidity"
+  	Tag4 = "Latitude"
+  	Tag5 = "Lati_"
+  	Tag6 = "Longitude"
+  	Tag7 = "Longi_"
+  	Tag8 = "SoilMoisture"
+    Tag9 = "Red"
+  	Tag10 = "Green"
+  	Tag11 = "Blue"
+	
+	value = resiot_hexdecode_ascii(payload)
+	--Calls for LUA Script engine prints
+  --Tag1
+  	value1 = string.sub(value,1,3)
+--	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag1, value1))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag1, value1)
+  --Tag2
+  	value2 = string.sub(value,4,7)
+	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag2, value2))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag2, value2)
+  --Tag3
+  	value3 = string.sub(value,8,11)
+--	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag3, value3))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag3, value3)
+  --Tag4 
+  	value4 = string.sub(value,12,16)
+	--resiot_debug(string.format("Tag: %s  Value: %s \n", Tag4, value4))
+	--worked, err = resiot_setnodevalue(appeui, deveui, Tag4, value4)
+  --Tag5
+  	value5 = string.sub(value,17,17)
+--	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag5, value5))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag5, value5)
+  	value5 = tonumber(value5)
+  	if(value5 == 1) then
+  		value4 = tonumber(value4)
+    	value4 = value4 * (-1)
+	else
+  		
+	end
+--  	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag4, value4))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag4, value4)
+  --Tag6
+  	value6 = string.sub(value,18,21)
+--	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag6, value6))
+--	worked, err = resiot_setnodevalue(appeui, deveui, Tag6, value6)
+  --Tag7
+  	value7 = string.sub(value,22,22)
+	--resiot_debug(string.format("Tag: %s  Value: %s \n", Tag7, value7))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag7, value7)
+  	value7 = tonumber(value7)
+  	if(value7 == 1) then
+  		value6 = tonumber(value6)
+    	value6 = value6 * (-1)
+	else
+  		
+	end
+--  	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag6, value6))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag6, value6)
+  
+    --Tag8
+  	value8 = string.sub(value,23,25)
+--	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag8, value8))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag8, value8)
+  
+  --From here it is not necessary the rest
+--Tag9
+  	value9 = string.sub(value,26,26)
+--	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag9, value9))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag9, value9)
+  --Tag10
+  	value10 = string.sub(value,27,27)
+--	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag10, value10))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag10, value10)
+--Tag11
+  	value11 = string.sub(value,28,28)
+--	resiot_debug(string.format("Tag: %s  Value: %s \n", Tag11, value11))
+	worked, err = resiot_setnodevalue(appeui, deveui, Tag11, value11)
+	if(not worked) then
+--  		resiot_debug(string.format("Set value error: %s \n",err))
+	else
+--  		resiot_debug("Set Node value succesful\n")
+	end
+end
+
+Origin = resiot_startfrom()	--Scene process starts here
+
+--Manual script execution for testing
+if Origin == "Manual" then
+  	payload = "312e32"		--Set your test payload here in hexadecimal
+  	appeui = "70b3d57ed000fcda"		--Set your Application EUI here
+  	deveui = "7b39323559379194"		--Set your own Device EUI here
+--Normal execution, get payload received from device
+else
+  	appeui = resiot_comm_getparam("appeui")
+  	deveui = resiot_comm_getparam("deveui")
+  	payload, err = resiot_getlastpayload(appeui, deveui)
+end
+
+--Do your stuff
+parsePayload(appeui,deveui,payload)
